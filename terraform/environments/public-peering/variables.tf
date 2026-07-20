@@ -102,6 +102,12 @@ variable "authz_policies_csv" {
   default     = ""
 }
 
+variable "dir_routing_bootstrap_peers" {
+  description = "Routing bootstrap peers for the DIR node. If empty, uses the Outshift testbed bootstrap."
+  type        = list(string)
+  default     = []
+}
+
 variable "reconciler_enabled" {
   description = "Enable the DIR reconciler for synchronization with federated peers. The reconciler pulls records from trusted directories and syncs OCI registry content. Defaults to true for federation support."
   type        = bool

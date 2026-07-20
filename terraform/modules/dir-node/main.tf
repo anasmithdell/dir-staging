@@ -66,6 +66,13 @@ locals {
   # Construct the complete authz_policies_csv YAML block with proper formatting
   authz_policies_yaml = "    ${replace(local.authz_policies, "\n", "\n    ")}"
 
+  # Default routing bootstrap peers if none provided
+  default_routing_bootstrap_peers = [
+    "/dns4/routing.ads.outshift.io/tcp/5555/p2p/12D3KooWLf9p3cedc86xGQBaqak6rAFmQk1HxKAK1yh7umHE3amu"
+  ]
+
+  routing_bootstrap_peers = length(var.routing_bootstrap_peers) > 0 ? var.routing_bootstrap_peers : local.default_routing_bootstrap_peers
+
   # Manually construct federation YAML with proper indentation
   federation_yaml = length(var.federation_peers) > 0 ? join("\n", flatten([
     for peer in var.federation_peers : [
@@ -78,21 +85,22 @@ locals {
   ])) : ""
 
   dir_values = templatefile("${path.module}/values/dir.yaml.tftpl", {
-    apiserver_image_tag         = var.dir_chart_version
-    trust_domain                = var.trust_domain
-    base_fqdn                   = var.base_fqdn
-    namespace                   = var.namespace
-    credentials_secret_name     = local.credentials_secret_name
-    zot_pvc_size                = var.zot_pvc_size
-    federation_yaml             = local.federation_yaml
-    authz_policies_csv          = local.authz_policies_yaml
-    reconciler_enabled          = var.reconciler_enabled
-    reconciler_image_tag        = var.reconciler_image_tag
-    reconciler_regsync_enabled  = var.reconciler_regsync_enabled
-    reconciler_regsync_interval = var.reconciler_regsync_interval
-    reconciler_regsync_timeout  = var.reconciler_regsync_timeout
-    reconciler_indexer_enabled  = var.reconciler_indexer_enabled
-    reconciler_indexer_interval = var.reconciler_indexer_interval
+    apiserver_image_tag           = var.dir_chart_version
+    trust_domain                  = var.trust_domain
+    base_fqdn                     = var.base_fqdn
+    namespace                     = var.namespace
+    credentials_secret_name       = local.credentials_secret_name
+    zot_pvc_size                  = var.zot_pvc_size
+    federation_yaml               = local.federation_yaml
+    authz_policies_csv            = local.authz_policies_yaml
+    routing_bootstrap_peers       = local.routing_bootstrap_peers
+    reconciler_enabled            = var.reconciler_enabled
+    reconciler_image_tag          = var.reconciler_image_tag
+    reconciler_regsync_enabled    = var.reconciler_regsync_enabled
+    reconciler_regsync_interval   = var.reconciler_regsync_interval
+    reconciler_regsync_timeout    = var.reconciler_regsync_timeout
+    reconciler_indexer_enabled    = var.reconciler_indexer_enabled
+    reconciler_indexer_interval   = var.reconciler_indexer_interval
   })
 }
 

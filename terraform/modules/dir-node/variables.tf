@@ -70,6 +70,12 @@ variable "authz_policies_csv" {
   default     = ""
 }
 
+variable "routing_bootstrap_peers" {
+  description = "List of libp2p multiaddrs for routing bootstrap peers. If empty, the Outshift testbed bootstrap peer is used."
+  type        = list(string)
+  default     = []
+}
+
 variable "reconciler_enabled" {
   description = "Enable the DIR reconciler for synchronization with federated peers. The reconciler pulls records from trusted directories and syncs OCI registry content."
   type        = bool
