@@ -30,8 +30,8 @@ resource "kubernetes_secret" "dir_credentials" {
 
   data = {
     "postgres-password" = random_password.postgres.result
-    "password"         = random_password.postgres.result
-    "zot-htpasswd"     = "admin:${htpasswd_password.zot.bcrypt}"
+    "password"          = random_password.postgres.result
+    "zot-htpasswd"      = "admin:${htpasswd_password.zot.bcrypt}"
   }
 
   depends_on = [kubectl_manifest.namespace]
@@ -84,23 +84,32 @@ locals {
     ]
   ])) : ""
 
+  # Trust domains of DIR federation peers whose X.509-SVIDs the
+  # dir-apiserver and dir-reconciler workloads need to validate. The
+  # published dir chart does not set spec.federatesWith on the
+  # ClusterSPIFFEID resources, so we inject it via postrender.
+  federates_with = [
+    for peer in var.federation_peers : peer.trustDomain
+    if peer.trustDomain != var.trust_domain
+  ]
+
   dir_values = templatefile("${path.module}/values/dir.yaml.tftpl", {
-    apiserver_image_tag           = var.dir_chart_version
-    trust_domain                  = var.trust_domain
-    base_fqdn                     = var.base_fqdn
-    namespace                     = var.namespace
-    credentials_secret_name       = local.credentials_secret_name
-    zot_pvc_size                  = var.zot_pvc_size
-    federation_yaml               = local.federation_yaml
-    authz_policies_csv            = local.authz_policies_yaml
-    routing_bootstrap_peers       = local.routing_bootstrap_peers
-    reconciler_enabled            = var.reconciler_enabled
-    reconciler_image_tag          = var.reconciler_image_tag
-    reconciler_regsync_enabled    = var.reconciler_regsync_enabled
-    reconciler_regsync_interval   = var.reconciler_regsync_interval
-    reconciler_regsync_timeout    = var.reconciler_regsync_timeout
-    reconciler_indexer_enabled    = var.reconciler_indexer_enabled
-    reconciler_indexer_interval   = var.reconciler_indexer_interval
+    apiserver_image_tag         = var.dir_chart_version
+    trust_domain                = var.trust_domain
+    base_fqdn                   = var.base_fqdn
+    namespace                   = var.namespace
+    credentials_secret_name     = local.credentials_secret_name
+    zot_pvc_size                = var.zot_pvc_size
+    federation_yaml             = local.federation_yaml
+    authz_policies_csv          = local.authz_policies_yaml
+    routing_bootstrap_peers     = local.routing_bootstrap_peers
+    reconciler_enabled          = var.reconciler_enabled
+    reconciler_image_tag        = var.reconciler_image_tag
+    reconciler_regsync_enabled  = var.reconciler_regsync_enabled
+    reconciler_regsync_interval = var.reconciler_regsync_interval
+    reconciler_regsync_timeout  = var.reconciler_regsync_timeout
+    reconciler_indexer_enabled  = var.reconciler_indexer_enabled
+    reconciler_indexer_interval = var.reconciler_indexer_interval
   })
 }
 
@@ -120,6 +129,18 @@ resource "helm_release" "dir" {
   wait_for_jobs    = false
   cleanup_on_fail  = true
   disable_webhooks = true
+
+  # The published dir chart does not set spec.federatesWith on the
+  # ClusterSPIFFEIDs for dir-apiserver and dir-reconciler. Inject it
+  # post-render from the federation_peers trust domains so mTLS works
+  # across federated directories. Remove once the chart supports it natively.
+  postrender {
+    binary_path = "python"
+    args = concat(
+      ["${path.module}/postrender.py", "--trust-domain", var.trust_domain],
+      flatten([for peer in var.federation_peers : ["--peer", peer.trustDomain]])
+    )
+  }
 
   depends_on = [
     kubectl_manifest.namespace,

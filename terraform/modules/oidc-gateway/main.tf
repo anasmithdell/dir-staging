@@ -1,5 +1,5 @@
 locals {
-  namespace = "oidc-gateway"
+  namespace    = "oidc-gateway"
   gateway_fqdn = "gateway.${var.base_fqdn}"
 }
 
@@ -12,42 +12,42 @@ resource "kubernetes_namespace" "namespace" {
 
 locals {
   oidc_gateway_values = templatefile("${path.module}/values/oidc-gateway.yaml.tftpl", {
-    namespace                = local.namespace
-    gateway_fqdn            = local.gateway_fqdn
-    dir_backend_address     = var.dir_backend_address
-    dir_backend_port        = var.dir_backend_port
-    trust_domain            = var.trust_domain
-    className               = var.className
-    
+    namespace           = local.namespace
+    gateway_fqdn        = local.gateway_fqdn
+    dir_backend_address = var.dir_backend_address
+    dir_backend_port    = var.dir_backend_port
+    trust_domain        = var.trust_domain
+    className           = var.className
+
     # OIDC providers configuration
-    github_enabled          = var.github_enabled
-    github_issuer           = var.github_issuer
-    github_jwks_uri         = var.github_jwks_uri
-    github_jwks_host        = var.github_jwks_host
-    github_audiences        = var.github_audiences
-    
-    google_enabled          = var.google_enabled
-    google_issuer           = var.google_issuer
-    google_jwks_uri         = var.google_jwks_uri
-    google_jwks_host        = var.google_jwks_host
-    google_audiences        = var.google_audiences
-    
+    github_enabled   = var.github_enabled
+    github_issuer    = var.github_issuer
+    github_jwks_uri  = var.github_jwks_uri
+    github_jwks_host = var.github_jwks_host
+    github_audiences = var.github_audiences
+
+    google_enabled   = var.google_enabled
+    google_issuer    = var.google_issuer
+    google_jwks_uri  = var.google_jwks_uri
+    google_jwks_host = var.google_jwks_host
+    google_audiences = var.google_audiences
+
     # Custom OIDC providers
-    custom_issuers          = var.custom_issuers
-    
+    custom_issuers = var.custom_issuers
+
     # RBAC configuration
-    admin_principals        = var.admin_principals
-    viewer_principals       = var.viewer_principals
-    ci_writer_principals    = var.ci_writer_principals
-    
+    admin_principals     = var.admin_principals
+    viewer_principals    = var.viewer_principals
+    ci_writer_principals = var.ci_writer_principals
+
     # Ingress configuration
-    ingress_enabled         = var.ingress_enabled
-    ingress_class           = var.ingress_class
-    ingress_annotations     = var.ingress_annotations
-    acme_email              = var.acme_email
-    
+    ingress_enabled     = var.ingress_enabled
+    ingress_class       = var.ingress_class
+    ingress_annotations = var.ingress_annotations
+    acme_email          = var.acme_email
+
     # Resource configuration
-    envoy_replica_count     = var.envoy_replica_count
+    envoy_replica_count       = var.envoy_replica_count
     auth_server_replica_count = var.auth_server_replica_count
   })
 }
