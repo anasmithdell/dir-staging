@@ -134,10 +134,18 @@ resource "helm_release" "dir" {
   # ClusterSPIFFEIDs for dir-apiserver and dir-reconciler. Inject it
   # post-render from the federation_peers trust domains so mTLS works
   # across federated directories. Remove once the chart supports it natively.
+  # The chart also overwrites reconciler.config.local_registry.registry_address
+  # with the apiserver's external store OCI address, so postrender restores the
+  # in-cluster Zot address for the reconciler.
   postrender {
     binary_path = "python"
     args = concat(
-      ["${path.module}/postrender.py", "--trust-domain", var.trust_domain],
+      [
+        "${path.module}/postrender.py",
+        "--trust-domain", var.trust_domain,
+        "--base-fqdn", var.base_fqdn,
+        "--namespace", var.namespace,
+      ],
       flatten([for peer in var.federation_peers : ["--peer", peer.trustDomain]])
     )
   }
