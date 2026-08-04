@@ -87,6 +87,11 @@ module "public_dir" {
   reconciler_regsync_authn_mode        = var.reconciler_regsync_authn_mode
   reconciler_regsync_authn_socket_path = var.reconciler_regsync_authn_socket_path
   reconciler_regsync_authn_audiences   = var.reconciler_regsync_authn_audiences
+  azure_openai_enabled                 = var.azure_openai_enabled
+  azure_openai_base_url                = var.azure_openai_base_url
+  azure_openai_deployment              = var.azure_openai_deployment
+  azure_openai_api_version             = var.azure_openai_api_version
+  azure_openai_api_key                 = var.azure_openai_api_key
 
   trust_domain = module.public_spire.trust_domain
   base_fqdn    = module.public_spire.federation_fqdn

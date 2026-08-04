@@ -168,6 +168,14 @@ ${routing_autosync_yaml}
       repository: ghcr.io/agntcy/dir-reconciler
       tag: ${reconciler_image_tag}
       pullPolicy: IfNotPresent
+    azureOpenAI:
+      enabled: ${azure_openai_enabled}
+      baseURL: "${azure_openai_base_url}"
+      deployment: "${azure_openai_deployment}"
+      apiVersion: "${azure_openai_api_version}"
+      apiKey:
+        secretName: "${credentials_secret_name}"
+        secretKey: "azure-openai-api-key"
     config:
       database:
         type: postgres

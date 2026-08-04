@@ -276,3 +276,35 @@ variable "oidc_spiffe_jwt_federates_with" {
   type        = list(string)
   default     = []
 }
+
+# Azure OpenAI configuration for LLM-backed scanners
+variable "azure_openai_enabled" {
+  description = "Enable Azure OpenAI integration for LLM-backed scanners in the reconciler."
+  type        = bool
+  default     = false
+}
+
+variable "azure_openai_base_url" {
+  description = "Azure OpenAI endpoint URL (e.g., 'https://<resource>.openai.azure.com/')."
+  type        = string
+  default     = ""
+}
+
+variable "azure_openai_deployment" {
+  description = "Azure OpenAI deployment/model name (e.g., 'gpt-4o', 'gpt-4-turbo')."
+  type        = string
+  default     = ""
+}
+
+variable "azure_openai_api_version" {
+  description = "Azure OpenAI API version (e.g., '2024-08-01-preview')."
+  type        = string
+  default     = "2024-08-01-preview"
+}
+
+variable "azure_openai_api_key" {
+  description = "Azure OpenAI API key. For production, use external secrets management instead."
+  type        = string
+  default     = ""
+  sensitive   = true
+}

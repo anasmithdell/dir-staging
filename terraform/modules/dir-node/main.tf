@@ -29,11 +29,16 @@ resource "kubernetes_secret" "dir_credentials" {
 
   type = "Opaque"
 
-  data = {
-    "postgres-password" = random_password.postgres.result
-    "password"          = random_password.postgres.result
-    "zot-htpasswd"      = "admin:${htpasswd_password.zot.bcrypt}"
-  }
+  data = merge(
+    {
+      "postgres-password" = random_password.postgres.result
+      "password"          = random_password.postgres.result
+      "zot-htpasswd"      = "admin:${htpasswd_password.zot.bcrypt}"
+    },
+    var.azure_openai_enabled && var.azure_openai_api_key != "" ? {
+      "azure-openai-api-key" = var.azure_openai_api_key
+    } : {}
+  )
 
   depends_on = [kubectl_manifest.namespace]
 }
@@ -191,6 +196,10 @@ locals {
     http_gateway_enabled                 = var.http_gateway_enabled
     http_gateway_fqdn                    = local.http_gateway_fqdn
     http_gateway_catalog_title           = var.http_gateway_catalog_title
+    azure_openai_enabled                 = var.azure_openai_enabled
+    azure_openai_base_url                = var.azure_openai_base_url
+    azure_openai_deployment              = var.azure_openai_deployment
+    azure_openai_api_version             = var.azure_openai_api_version
   })
 }
 
@@ -210,6 +219,12 @@ resource "helm_release" "dir" {
   wait_for_jobs    = false
   cleanup_on_fail  = true
   disable_webhooks = true
+
+  # Force Helm to wait for secret updates before deploying
+  set_sensitive {
+    name  = "reconciler.azureOpenAI.secretChecksum"
+    value = sha256(jsonencode(kubernetes_secret.dir_credentials.data))
+  }
 
   depends_on = [
     kubectl_manifest.namespace,
