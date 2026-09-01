@@ -276,3 +276,9 @@ variable "oidc_spiffe_jwt_federates_with" {
   type        = list(string)
   default     = []
 }
+
+variable "publication_scheduler_interval" {
+  description = "Interval for the publication scheduler to process submitted requests (e.g., '1m', '5m', '1h')."
+  type        = string
+  default     = "1h"
+}
