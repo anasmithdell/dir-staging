@@ -81,6 +81,8 @@ ${authz_policies_csv}
       datastore_dir: /var/lib/routing-datastore
       autosync:
 ${routing_autosync_yaml}
+    publication:
+      scheduler_interval: ${publication_scheduler_interval}
 
   # Create PVC for routing/cache data persistence
   # When enabled, routing data persists across pod restarts and crashes

@@ -191,6 +191,7 @@ locals {
     http_gateway_enabled                 = var.http_gateway_enabled
     http_gateway_fqdn                    = local.http_gateway_fqdn
     http_gateway_catalog_title           = var.http_gateway_catalog_title
+    publication_scheduler_interval        = var.publication_scheduler_interval
   })
 }
 
