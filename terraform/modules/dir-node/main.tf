@@ -188,6 +188,7 @@ locals {
     reconciler_regsync_authn_mode        = var.reconciler_regsync_authn_mode
     reconciler_regsync_authn_socket_path = var.reconciler_regsync_authn_socket_path
     reconciler_regsync_authn_audiences   = var.reconciler_regsync_authn_audiences
+    reconciler_signature_interval        = var.reconciler_signature_interval
     http_gateway_enabled                 = var.http_gateway_enabled
     http_gateway_fqdn                    = local.http_gateway_fqdn
     http_gateway_catalog_title           = var.http_gateway_catalog_title

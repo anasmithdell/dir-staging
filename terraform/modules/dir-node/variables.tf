@@ -165,3 +165,9 @@ variable "publication_scheduler_interval" {
   type        = string
   default     = "1h"
 }
+
+variable "reconciler_signature_interval" {
+  description = "Interval for signature verification to check for newly signed records (e.g., '1m', '5m', '1h')."
+  type        = string
+  default     = "1h"
+}
