@@ -87,6 +87,7 @@ module "public_dir" {
   reconciler_regsync_authn_mode        = var.reconciler_regsync_authn_mode
   reconciler_regsync_authn_socket_path = var.reconciler_regsync_authn_socket_path
   reconciler_regsync_authn_audiences   = var.reconciler_regsync_authn_audiences
+  reconciler_signature_interval        = var.reconciler_signature_interval
   publication_scheduler_interval        = var.publication_scheduler_interval
 
   trust_domain = module.public_spire.trust_domain
