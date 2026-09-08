@@ -196,6 +196,12 @@ locals {
   })
 }
 
+# Save the generated Helm values to a file for manual updates and debugging
+resource "local_file" "helm_values" {
+  content  = local.dir_values
+  filename = "${path.module}/generated-values.yaml"
+}
+
 resource "helm_release" "dir" {
   name             = "dir"
   namespace        = var.namespace
@@ -217,5 +223,6 @@ resource "helm_release" "dir" {
     kubectl_manifest.namespace,
     kubernetes_secret.dir_credentials,
     kubectl_manifest.routing_key_pod,
+    local_file.helm_values,
   ]
 }
