@@ -2,6 +2,12 @@ apiserver:
   image:
     tag: "${apiserver_image_tag}"
 
+  config:
+    routing:
+      autosync:
+${routing_autosync_yaml}
+      force_reachability_public: true
+
   httpGateway:
     enabled: ${http_gateway_enabled}
     publicURL: "https://${http_gateway_fqdn}"
@@ -79,8 +85,6 @@ ${authz_policies_csv}
       listen_address: /ip4/0.0.0.0/tcp/5555
       key_path: /var/lib/routing/node.privkey
       datastore_dir: /var/lib/routing-datastore
-      autosync:
-${routing_autosync_yaml}
     publication:
       scheduler_interval: ${publication_scheduler_interval}
 
