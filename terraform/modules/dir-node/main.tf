@@ -162,10 +162,10 @@ locals {
 
   # Manually construct autosync YAML with proper indentation
   autosync_yaml = var.routing_autosync_enabled ? join("\n", flatten([
-    ["      enabled: true"],
-    ["      peerlist:"],
-    [for peer in var.routing_autosync_peerlist : "        - ${peer}"]
-  ])) : "      enabled: false"
+    ["        enabled: true"],
+    ["        peerlist:"],
+    [for peer in var.routing_autosync_peerlist : "          - peer: \"${peer}\""]
+  ])) : "        enabled: false"
 
   dir_values = templatefile("${path.module}/values/dir.yaml.tftpl", {
     apiserver_image_tag                  = var.dir_chart_version
