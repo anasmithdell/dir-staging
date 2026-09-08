@@ -217,3 +217,42 @@ The routing service requires:
 - ⚠️ VPN blocking may affect accessibility (non-standard port)
 
 If the routing service is unreachable, peer discovery and publication will fail silently while the rest of the deployment appears healthy.
+
+## Manual Helm Updates
+
+The terraform module automatically generates a Helm values file that can be used for manual Helm updates without going through terraform. This is useful for quick updates, testing configuration changes, or when you need to apply changes faster than a full terraform apply.
+
+### Generated Values File
+
+After applying terraform, the generated Helm values file is saved to:
+```
+terraform/modules/dir-node/generated-values.yaml
+```
+
+This file contains the complete Helm values configuration that terraform generates from all the module variables and templates.
+
+### Using the Generated Values File
+
+To manually update the Helm deployment using the generated values file:
+
+```bash
+helm upgrade dir oci://ghcr.io/agntcy/dir/helm-charts/dir \
+  --version v1.7.0 \
+  --namespace dir \
+  -f terraform/modules/dir-node/generated-values.yaml
+```
+
+### When to Use Manual Updates
+
+- **Quick Configuration Changes**: When you need to test small configuration changes quickly
+- **Emergency Updates**: When you need to apply fixes faster than terraform apply
+- **Testing**: When you want to test Helm chart changes without modifying terraform
+- **Debugging**: When you need to inspect the exact values being passed to Helm
+
+### Important Notes
+
+- The generated values file is **overwritten** each time terraform is applied
+- Manual Helm changes will be **reverted** when you next run `terraform apply`
+- For persistent changes, modify the terraform configuration instead
+- Always keep a backup of any manual changes you want to preserve
+- The generated file is a good reference for understanding the complete Helm configuration

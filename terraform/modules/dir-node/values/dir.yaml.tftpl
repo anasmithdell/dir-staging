@@ -85,6 +85,9 @@ ${authz_policies_csv}
       listen_address: /ip4/0.0.0.0/tcp/5555
       key_path: /var/lib/routing/node.privkey
       datastore_dir: /var/lib/routing-datastore
+      autosync:
+${routing_autosync_yaml}
+      force_reachability_public: true
     publication:
       scheduler_interval: ${publication_scheduler_interval}
 
