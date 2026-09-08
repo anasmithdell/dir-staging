@@ -2,12 +2,6 @@ apiserver:
   image:
     tag: "${apiserver_image_tag}"
 
-  config:
-    routing:
-      autosync:
-${routing_autosync_yaml}
-      force_reachability_public: true
-
   httpGateway:
     enabled: ${http_gateway_enabled}
     publicURL: "https://${http_gateway_fqdn}"
@@ -76,17 +70,19 @@ ${authz_policies_csv}
         repository_name: dir
       provider: oci
     routing:
+      listen_address: "/ip4/0.0.0.0/tcp/5555"
+      key_path: /var/lib/routing/node.privkey
       bootstrap_peers:
 %{ for peer in routing_bootstrap_peers ~}
         - ${peer}
 %{ endfor ~}
       gossipsub:
         enabled: true
-      listen_address: /ip4/0.0.0.0/tcp/5555
-      key_path: /var/lib/routing/node.privkey
       datastore_dir: /var/lib/routing-datastore
       autosync:
 ${routing_autosync_yaml}
+      relay_service: false
+      force_reachability_private: false
       force_reachability_public: true
     publication:
       scheduler_interval: ${publication_scheduler_interval}
