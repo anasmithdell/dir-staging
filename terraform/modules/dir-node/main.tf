@@ -162,10 +162,10 @@ locals {
 
   # Manually construct autosync YAML with proper indentation
   autosync_yaml = var.routing_autosync_enabled ? join("\n", flatten([
-    ["      enabled: true"],
-    ["      peerlist:"],
-    [for peer in var.routing_autosync_peerlist : "        - ${peer}"]
-  ])) : "      enabled: false"
+    ["        enabled: true"],
+    ["        peerlist:"],
+    [for peer in var.routing_autosync_peerlist : "          - peer: \"${peer}\""]
+  ])) : "        enabled: false"
 
   dir_values = templatefile("${path.module}/values/dir.yaml.tftpl", {
     apiserver_image_tag                  = var.dir_chart_version
@@ -196,6 +196,12 @@ locals {
   })
 }
 
+# Save the generated Helm values to a file for manual updates and debugging
+resource "local_file" "helm_values" {
+  content  = local.dir_values
+  filename = "${path.module}/generated-values.yaml"
+}
+
 resource "helm_release" "dir" {
   name             = "dir"
   namespace        = var.namespace
@@ -217,5 +223,6 @@ resource "helm_release" "dir" {
     kubectl_manifest.namespace,
     kubernetes_secret.dir_credentials,
     kubectl_manifest.routing_key_pod,
+    local_file.helm_values,
   ]
 }
